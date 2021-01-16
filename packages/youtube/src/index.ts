@@ -55,7 +55,7 @@ const YoutubeLive: Plugin<{
 										`?&maxResults=${opts.maxResults || 100}` +
 										"&part=id,snippet,authorDetails" +
 										`&liveChatId=${liveChatId}` +
-										`&key=${opts.apiKey}`,
+										`&key=${opts.apiKey[keyIndex]}`,
 								)
 								.then(messageHolder => {
 									const messages: Array<any> = messageHolder.data.items;
