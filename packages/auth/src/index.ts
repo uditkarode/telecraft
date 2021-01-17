@@ -193,6 +193,19 @@ const auth: Plugin<
 			messenger.send(fromId, "Link successful!");
 		});
 
+		messenger.on("unlink", async ctx => {
+			const fromId = ctx.from.id;
+			const chatId = ctx.from.chat;
+			const username = ctx.from.username;
+
+			const existingUser = await authStore.find(fromId);
+			if(!existingUser)
+				return messenger.send(chatId, "You can't /unlink if you never /link'ed!");
+
+			await authStore.remove(existingUser[0]);
+			return messenger.send(chatId, `Successfuly unlinked ${username} from ${existingUser[0]}`);
+		})
+
 		messenger.on("auth", async ctx => {
 			const fromId = ctx.from.id;
 			const chatId = ctx.from.chat;
