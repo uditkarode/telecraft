@@ -89,7 +89,7 @@ const YoutubeLive: Plugin<{
 								.catch(error => {
 									if (error.response) {
 										if (error.response.status === 403) {
-											if (keyIndex === opts.apiKey.length)
+											if (keyIndex+1 === opts.apiKey.length)
 												throw createError(
 													"API key limit exhausted on all indexes!",
 												);
