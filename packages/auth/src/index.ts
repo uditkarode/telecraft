@@ -116,36 +116,41 @@ const auth: Plugin<
 					setAuthCache(player, { op: Boolean(ctx.op) }),
 			);
 
-			events.once("minecraft:data", ctx => {
+			const lockUser = (ctx: any) => {
 				const data = parse(ctx.data) as any;
 
-				const playerGameType: gameModes = gameModes[data.playerGameType.value];
-				const pos: Pos = data.Pos as Pos;
-				const dimension: string = data.Dimension;
+				if(data.user === player) {
+					events.off("minecraft:data", lockUser);
+					const playerGameType: gameModes = gameModes[data.playerGameType.value];
+					const pos: Pos = data.Pos as Pos;
+					const dimension: string = data.Dimension;
 
-				tpLock(player, dimension, pos, playerGameType);
+					tpLock(player, dimension, pos, playerGameType);
 
-				if (storeUser?.telegram) {
-					server.send(`tellraw ${player} "Send /auth to the bridge bot."`);
-					messenger.send(
-						storeUser.telegram,
-						"Send /auth to authenticate yourself.",
-					);
-				} else {
-					setAuthCache(player, { code: rand() });
+					if (storeUser?.telegram) {
+						server.send(`tellraw ${player} "Send /auth to the bridge bot."`);
+						messenger.send(
+							storeUser.telegram,
+							"Send /auth to authenticate yourself.",
+						);
+					} else {
+						setAuthCache(player, { code: rand() });
 
-					server.send(
-						// Todo(mkr): make link copyable
-						`tellraw ${player} "Send \`/link ${
-							authCache.get(player)!.code
-						}\` to the bridge bot."`,
-					);
-					server.send(
-						`title ${player} title "Send /link ${authCache.get(player)!.code}"`,
-					);
-					server.send(`title ${player} subtitle "to bridge bot"`);
+						server.send(
+							// Todo(mkr): make link copyable
+							`tellraw ${player} "Send \`/link ${
+								authCache.get(player)!.code
+							}\` to the bridge bot."`,
+						);
+						server.send(
+							`title ${player} title "Send /link ${authCache.get(player)!.code}"`,
+						);
+						server.send(`title ${player} subtitle "to bridge bot"`);
+					}
 				}
-			});
+			}
+
+			events.on("minecraft:data", lockUser);
 		});
 
 		events.on("minecraft:leave", async (ctx: { user: string }) => {
