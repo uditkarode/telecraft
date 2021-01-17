@@ -200,7 +200,7 @@ const auth: Plugin<
 
 			const existingUser = await authStore.find(fromId);
 			if(!existingUser)
-				return messenger.send(chatId, "You can't /unlink if you never /link'ed!");
+				return messenger.send(chatId, "You can't unlink if you never linked!");
 
 			await authStore.remove(existingUser[0]);
 			return messenger.send(chatId, `Successfuly unlinked ${username} from ${existingUser[0]}`);
@@ -219,7 +219,7 @@ const auth: Plugin<
 			const cacheUser = authCache.get(mcName);
 
 			if (!cacheUser)
-				return messenger.send(chatId, "Login to the server first.");
+				return messenger.send(chatId, "You are either not logged in or have already authorised yourself.");
 
 			// Todo(mkr): Refactor link & auth common tasks into one
 			await unlock(mcName);
