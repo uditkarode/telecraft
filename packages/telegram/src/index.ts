@@ -328,13 +328,14 @@ const Telegram: Plugin<Opts, [], exports> = opts => {
 
 				const chatMessage = MCChat.message(emitCtx);
 
-				if (typeof emitCtx.text === "string" && isCommand(emitCtx.text)) {
-					const cmd = parseCommand(emitCtx.text);
-					emit(cmd.cmd, Object.assign(emitCtx, cmd));
-				} else {
-					emit("message", emitCtx);
-
-					server.send("tellraw @a " + JSON.stringify(chatMessage));
+				if (typeof emitCtx.text === "string") {
+					if (isCommand(emitCtx.text)) {
+						const cmd = parseCommand(emitCtx.text);
+						emit(cmd.cmd, Object.assign(emitCtx, cmd));
+					} else if (!isBotPM) {
+						emit("message", emitCtx);
+						server.send("tellraw @a " + JSON.stringify(chatMessage));
+					}
 				}
 			};
 
